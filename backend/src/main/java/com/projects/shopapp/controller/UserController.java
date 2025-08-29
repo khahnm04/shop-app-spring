@@ -1,0 +1,46 @@
+package com.projects.shopapp.controller;
+
+import java.util.*;
+import com.projects.shopapp.dtos.*;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("${api.prefix}/users")
+public class UserController {
+
+    @PostMapping("/register")
+    public ResponseEntity<?> createUser(
+        @Valid @RequestBody UserDTO userDTO,
+        BindingResult bindingResult
+    ) {
+        try {
+            if (bindingResult.hasErrors()) {
+                List<String> errorMessages = bindingResult.getFieldErrors()
+                        .stream()
+                        .map(FieldError::getDefaultMessage)
+                        .toList();
+                return ResponseEntity.badRequest().body(errorMessages);
+            }
+            if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
+                return ResponseEntity.badRequest().body("Password does not match");
+            }
+            return ResponseEntity.ok("Register successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+        @Valid @RequestBody UserLoginDTO userLoginDTO
+    ) {
+        // Kiểm tra thông tin đăng nhập và sinh token
+        // Trả về token trong response
+        return ResponseEntity.ok("some token");
+    }
+
+}
