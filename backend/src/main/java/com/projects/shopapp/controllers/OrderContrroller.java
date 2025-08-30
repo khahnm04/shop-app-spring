@@ -1,4 +1,4 @@
-package com.projects.shopapp.controller;
+package com.projects.shopapp.controllers;
 
 import com.projects.shopapp.dtos.*;
 import jakarta.validation.Valid;

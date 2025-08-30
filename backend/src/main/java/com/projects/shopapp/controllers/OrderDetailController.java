@@ -1,10 +1,9 @@
-package com.projects.shopapp.controller;
+package com.projects.shopapp.controllers;
 
 import com.projects.shopapp.dtos.OrderDetailDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
 
 @RestController
 @RequestMapping("${api.prefix}/order_details")

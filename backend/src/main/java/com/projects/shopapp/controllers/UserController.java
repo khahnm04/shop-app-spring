@@ -1,4 +1,4 @@
-package com.projects.shopapp.controller;
+package com.projects.shopapp.controllers;
 
 import java.util.*;
 import com.projects.shopapp.dtos.*;
