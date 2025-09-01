@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "categories")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {

@@ -1,7 +1,11 @@
 package com.projects.shopapp.controllers;
 
 import com.projects.shopapp.dtos.*;
+import com.projects.shopapp.models.Product;
+import com.projects.shopapp.models.ProductImage;
+import com.projects.shopapp.services.IProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,16 +14,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.*;
 
 @RestController
 @RequestMapping("${api.prefix}/products")
+@RequiredArgsConstructor
 public class ProductController {
+
+    private final IProductService productService;
 
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(
@@ -34,6 +38,7 @@ public class ProductController {
                         .toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
+            Product newProduct = productService.createProduct(productDTO);
             List<MultipartFile> files = productDTO.getFiles();
             files = files == null ? new ArrayList<MultipartFile>() : files;
             for (MultipartFile file : files) {
@@ -55,7 +60,13 @@ public class ProductController {
                 }
                 // Lưu file và cập nhật thumbnail trong DTO
                 String fileName = storeFile(file);
-                // Lưu vào đối tượng product trong DB => làm sau
+                // Lưu vào đối tượng product trong DB
+                ProductImage productImage = productService.createProductImage(
+                    newProduct.getId(),
+                    ProductImageDTO.builder()
+                            .imageUrl(fileName)
+                            .build()
+                );
                 // Lưu vào bảng product_images
             }
             return ResponseEntity.ok("product created successfully");

@@ -1,7 +1,10 @@
 package com.projects.shopapp.controllers;
 
 import com.projects.shopapp.dtos.CategoryDTO;
+import com.projects.shopapp.models.Category;
+import com.projects.shopapp.services.CategoryService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -10,20 +13,15 @@ import java.util.*;
 
 @RestController
 @RequestMapping("${api.prefix}/categories")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    @GetMapping("") // http://localhost:8088/api/v1/categories?page=1&limit=10
-    public ResponseEntity<String> getAllCategories(
-        @RequestParam("page") int page,
-        @RequestParam("limit") int limit
-    ) {
-        return ResponseEntity.ok(String.format("get all categories, page %d and limit %d", page, limit));
-    }
+    private final CategoryService categoryService;
 
     @PostMapping("")
-    public ResponseEntity<?> updateCategory(
-        @Valid @RequestBody CategoryDTO categoryDTO,
-        BindingResult bindingResult
+    public ResponseEntity<?> createCategory(
+            @Valid @RequestBody CategoryDTO categoryDTO,
+            BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             List<String> errorMessages = bindingResult.getFieldErrors()
@@ -32,17 +30,32 @@ public class CategoryController {
                     .toList();
             return ResponseEntity.badRequest().body(errorMessages);
         }
-        return ResponseEntity.ok("This is insertCategory " + categoryDTO);
+        categoryService.createCategory(categoryDTO);
+        return ResponseEntity.ok("Insert category successfully!");
+    }
+
+    @GetMapping("") // http://localhost:8088/api/v1/categories?page=1&limit=10
+    public ResponseEntity<List<Category>> getAllCategories(
+        @RequestParam("page") int page,
+        @RequestParam("limit") int limit
+    ) {
+        List<Category> categories = categoryService.getAllCategories();
+        return ResponseEntity.ok(categories);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> insertCategory(@PathVariable String id) {
-        return ResponseEntity.ok("update category with id: " + id);
+    public ResponseEntity<String> updateCategory(
+        @PathVariable Long id,
+        @Valid @RequestBody CategoryDTO categoryDTO
+    ) {
+        categoryService.updateCategory(id, categoryDTO);
+        return ResponseEntity.ok("Update category successfully!");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable String id) {
-        return ResponseEntity.ok("delete category with id: " + id);
+    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.ok("Delete category with id: " + id + " successfully!");
     }
 
 }

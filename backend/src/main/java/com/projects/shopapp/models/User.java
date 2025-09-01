@@ -1,10 +1,7 @@
 package com.projects.shopapp.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -12,6 +9,7 @@ import java.util.Date;
 @Table(name = "users")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {
@@ -38,10 +36,10 @@ public class User extends BaseEntity {
     private Date dateOfBirth;
 
     @Column(name = "facebook_account_id")
-    private String facebookAccountId;
+    private int facebookAccountId;
 
     @Column(name = "google_account_id")
-    private String googleAccountId;
+    private int googleAccountId;
 
     @ManyToOne
     @JoinColumn(name = "role_id")

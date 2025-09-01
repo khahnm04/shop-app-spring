@@ -10,6 +10,7 @@ import java.util.Date;
 @Table(name = "orders")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {

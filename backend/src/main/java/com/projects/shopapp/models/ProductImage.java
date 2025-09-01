@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 @Table(name = "product_images")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductImage {

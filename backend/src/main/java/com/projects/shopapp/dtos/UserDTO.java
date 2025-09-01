@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.*;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -26,7 +28,7 @@ public class UserDTO {
     private String retypePassword;
 
     @JsonProperty("date_of_birth")
-    private String dateOfBirth;
+    private Date dateOfBirth;
 
     @JsonProperty("facebook_account_id")
     private int facebookAccountId;

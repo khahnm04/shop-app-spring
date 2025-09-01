@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 @Table(name = "order_details")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDetail {

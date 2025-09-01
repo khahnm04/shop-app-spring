@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Table(name = "tokens")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Token {

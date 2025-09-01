@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 @Table(name = "social_accounts")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SocialAccount {
