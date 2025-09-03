@@ -3,6 +3,7 @@ package com.projects.shopapp.models;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -11,22 +12,22 @@ import java.time.LocalDate;
 public class BaseEntity {
 
     @Column(name = "created_at")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     // Tự động cập nhật createdAt và updatedAt
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Tự động cập nhật createdAt và updatedAt
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = LocalDate.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

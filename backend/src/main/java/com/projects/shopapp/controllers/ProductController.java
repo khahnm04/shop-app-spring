@@ -1,20 +1,18 @@
 package com.projects.shopapp.controllers;
 
-import com.projects.shopapp.dtos.*;
-import com.projects.shopapp.models.Product;
-import com.projects.shopapp.models.ProductImage;
+
 import com.projects.shopapp.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import org.springframework.web.bind.annotation.*;
+import com.projects.shopapp.models.*;
+import com.projects.shopapp.dtos.*;
+import org.springframework.http.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -25,9 +23,9 @@ public class ProductController {
 
     private final IProductService productService;
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("")
     public ResponseEntity<?> createProduct(
-        @Valid @ModelAttribute ProductDTO productDTO,
+        @Valid @RequestBody ProductDTO productDTO,
         BindingResult bindingResult
     ) {
         try {
@@ -39,8 +37,24 @@ public class ProductController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
             Product newProduct = productService.createProduct(productDTO);
-            List<MultipartFile> files = productDTO.getFiles();
+            return ResponseEntity.ok(newProduct);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProduct(
+        @PathVariable("id") Long productId,
+        @ModelAttribute("files") List<MultipartFile> files
+    ) {
+        try {
+            Product existingProduct = productService.getProductById(productId);
             files = files == null ? new ArrayList<MultipartFile>() : files;
+            if (files.size() > ProductImage.MAXIMUM_IMAGES_PER_PRODUCT) {
+                return ResponseEntity.badRequest().body("You can only upload maximum 5 images");
+            }
+            List<ProductImage> productImages = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (file.getSize() == 0) {
                     continue;
@@ -58,25 +72,27 @@ public class ProductController {
                             .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                             .body("File must be an image");
                 }
-                // Lưu file và cập nhật thumbnail trong DTO
                 String fileName = storeFile(file);
-                // Lưu vào đối tượng product trong DB
-                ProductImage productImage = productService.createProductImage(
-                    newProduct.getId(),
-                    ProductImageDTO.builder()
-                            .imageUrl(fileName)
-                            .build()
-                );
                 // Lưu vào bảng product_images
+                ProductImage productImage = productService.createProductImage(
+                        existingProduct.getId(),
+                        ProductImageDTO.builder()
+                                .imageUrl(fileName)
+                                .build()
+                );
+                productImages.add(productImage);
             }
-            return ResponseEntity.ok("product created successfully");
+            return ResponseEntity.ok().body(productImages);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     private String storeFile(MultipartFile file) throws IOException {
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        if (!isImageFile(file) || file.getOriginalFilename() == null) {
+            throw new IOException("Invalid image format");
+        }
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         // Thêm UUID vào trước tên file để đảm bảo tên file duy nhất
         String uniqueFileName = UUID.randomUUID().toString() + "." + fileName;
         // Đường dẫn đến thư mục muốn lưu file
@@ -90,6 +106,11 @@ public class ProductController {
         // Sao chép file vào thư mục đích
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
+    }
+
+    private boolean isImageFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null && contentType.startsWith("image/");
     }
 
     @GetMapping("")

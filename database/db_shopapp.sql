@@ -109,8 +109,10 @@ CREATE TABLE order_detail (
     number_of_products INT CHECK (number_of_products > 0),
     total_money INT CHECK (total_money >= 0),
     color VARCHAR(20) DEFAULT ''
-)
+);
 
+ALTER TABLE product_image RENAME TO product_images;
+ALTER TABLE order_detail RENAME TO order_details;
 
 
 
