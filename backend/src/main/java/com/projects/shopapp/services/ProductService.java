@@ -2,6 +2,7 @@ package com.projects.shopapp.services;
 
 import com.projects.shopapp.exceptions.DataNotFoundException;
 import com.projects.shopapp.exceptions.InvalidParamException;
+import com.projects.shopapp.responses.ProductResponse;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import com.projects.shopapp.repositories.*;
@@ -40,9 +41,20 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<Product> getAllProducts(PageRequest pageRequest) {
+    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
         // Get product list by page and limit
-        return productRepository.findAll(pageRequest);
+        return productRepository.findAll(pageRequest).map(product -> {
+            ProductResponse productResponse = ProductResponse.builder()
+                    .name(product.getName())
+                    .price(product.getPrice())
+                    .thumbnail(product.getThumbnail())
+                    .description(product.getDescription())
+                    .categoryId(product.getCategory().getId())
+                    .build();
+            productResponse.setCreatedAt(product.getCreatedAt());
+            productResponse.setUpdatedAt(product.getUpdatedAt());
+            return productResponse;
+        });
     }
 
     @Override

@@ -1,9 +1,13 @@
 package com.projects.shopapp.controllers;
 
-
+import com.projects.shopapp.responses.ProductListResponse;
+import com.projects.shopapp.responses.ProductResponse;
 import com.projects.shopapp.services.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -114,20 +118,35 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public ResponseEntity<String> getProducts(
+    public ResponseEntity<ProductListResponse> getProducts(
         @RequestParam("page") int page,
         @RequestParam("limit") int limit
     ) {
-        return ResponseEntity.ok("get products here");
+        // Create Pageable from page number and page size
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+        Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
+        // Get total number of pages
+        int totalPages = productPage.getTotalPages();
+        // Get the list of Products from the current page
+        List<ProductResponse> products = productPage.getContent();
+        return ResponseEntity.ok(ProductListResponse.builder()
+                        .productList(products)
+                        .totalPage(totalPages)
+                        .build()
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getProductById(@PathVariable("id") String productId) {
+    public ResponseEntity<String> getProductById(
+        @PathVariable("id") String productId
+    ) {
         return ResponseEntity.ok("Product with id " + productId);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable("id") long id) {
+    public ResponseEntity<String> deleteProduct(
+        @PathVariable("id") long id
+    ) {
         return ResponseEntity.ok(String.format("delete product with id %d", id));
     }
 

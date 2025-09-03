@@ -1,10 +1,8 @@
 package com.projects.shopapp.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import java.util.*;
 
 @Data
 @Getter
