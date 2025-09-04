@@ -38,12 +38,25 @@ public class OrderContrroller {
         }
     }
 
-    @GetMapping("/{user_id}")
+    @GetMapping("/user/{user_id}")
     public ResponseEntity<?> getOrders(
         @Valid @PathVariable("user_id") Long userId
     ) {
         try {
-            return ResponseEntity.ok("Lấy ra danh sách order từ user_id");
+            List<Order> orders = orderService.findByUserId(userId);
+            return ResponseEntity.ok(orders);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOrder(
+        @Valid @PathVariable("id") Long orderId
+    ) {
+        try {
+            Order existingOrder = orderService.getOrder(orderId);
+            return ResponseEntity.ok(existingOrder);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -54,14 +67,20 @@ public class OrderContrroller {
         @Valid @PathVariable long id,
         @Valid @RequestBody OrderDTO orderDTO
     ) {
-        return ResponseEntity.ok("cập nhật thông tin 1 order");
+        try {
+            Order order = orderService.updateOrder(id, orderDTO);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteOrder(
         @Valid @PathVariable long id
     ) {
-        // xóa mềm => cập nhật trường active = false
+        // soft delete => active = false
+        orderService.deleteOrder(id);
         return ResponseEntity.ok("Order deleted successfully");
     }
 
