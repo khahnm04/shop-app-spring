@@ -114,8 +114,10 @@ CREATE TABLE order_detail (
 ALTER TABLE product_image RENAME TO product_images;
 ALTER TABLE order_detail RENAME TO order_details;
 
+-- SET SQL_SAFE_UPDATES = 0;
+-- delete from db_shopapp.products
 
-
+alter table products auto_increment = 1;
 
 
 
