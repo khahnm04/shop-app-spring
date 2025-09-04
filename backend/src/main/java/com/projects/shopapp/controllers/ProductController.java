@@ -187,8 +187,8 @@ public class ProductController {
     }
 
     public ResponseEntity<?> updateProduct(
-            @PathVariable long id,
-            @RequestBody ProductDTO productDTO
+        @PathVariable long id,
+        @RequestBody ProductDTO productDTO
     ) {
         try {
             Product updateProduct = productService.updateProduct(id, productDTO);

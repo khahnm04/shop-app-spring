@@ -3,6 +3,7 @@ package com.projects.shopapp.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -37,6 +38,9 @@ public class OrderDTO {
 
     @JsonProperty("shipping_address")
     private String shippingAddress;
+
+    @JsonProperty("shipping_date")
+    private LocalDate shippingDate;
 
     @JsonProperty("payment_method")
     private String paymentMethod;

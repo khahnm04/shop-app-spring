@@ -117,7 +117,11 @@ ALTER TABLE order_detail RENAME TO order_details;
 -- SET SQL_SAFE_UPDATES = 0;
 -- delete from db_shopapp.products
 
-alter table products auto_increment = 1;
+-- alter table products auto_increment = 1;
+
+-- INSERT INTO users(fullname, phone_number, address, date_of_birth, password)
+-- VALUES('Nguyen Van A', '0964896239', 'address 123', '1993-12-22', 'hashedddd paasssss');
+
 
 
 
