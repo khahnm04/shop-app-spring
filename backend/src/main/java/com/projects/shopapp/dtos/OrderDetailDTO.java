@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class OrderDetailDTO {
     private Long productId;
 
     @Min(value = 0, message = "Order's ID must be >= 0")
-    private Long price;
+    private Float price;
 
     @JsonProperty("number_of_products")
     @Min(value = 1, message = "Order's ID must be >= 1")
@@ -29,7 +27,7 @@ public class OrderDetailDTO {
 
     @JsonProperty("total_money")
     @Min(value = 0, message = "Order's ID must be >= 0")
-    private BigDecimal totalMoney;
+    private Float totalMoney;
 
     private String color;
 
