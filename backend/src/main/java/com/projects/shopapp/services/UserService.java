@@ -2,6 +2,7 @@ package com.projects.shopapp.services;
 
 import com.projects.shopapp.components.JwtTokenUtil;
 import com.projects.shopapp.exceptions.DataNotFoundException;
+import com.projects.shopapp.exceptions.PermissionDenyException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,12 +26,17 @@ public class UserService implements IUserService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public User createUser(UserDTO userDTO) throws DataNotFoundException {
+    public User createUser(UserDTO userDTO) throws Exception {
         // Register user
         String phoneNumber = userDTO.getPhoneNumber();
         // Check if the phone number already exists
         if (userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Phone number already exists");
+        }
+        Role role = roleRepository.findById(userDTO.getRoleId())
+                .orElseThrow(() -> new DataNotFoundException("Role Not Found"));
+        if (role.getName().equals(Role.ADMIN)) {
+            throw new PermissionDenyException("You can't register an admin account");
         }
         // Convert from userDTO => User
         User newUser = User.builder()
@@ -42,8 +48,6 @@ public class UserService implements IUserService {
                 .facebookAccountId(userDTO.getFacebookAccountId())
                 .googleAccountId(userDTO.getGoogleAccountId())
                 .build();
-        Role role = roleRepository.findById(userDTO.getRoleId())
-                .orElseThrow(() -> new DataNotFoundException("Role Not Found"));
         newUser.setRole(role);
         // If accountId exists, password is not required
         if (userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
