@@ -8,17 +8,19 @@ import { OrderComponent } from './order/order.component';
 import { OrderConfirmComponent } from './order-confirm/order-confirm.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [    
-    HomeComponent, 
+  declarations: [
+    HomeComponent,
     HeaderComponent,
-    FooterComponent, 
+    FooterComponent,
     DetailProductComponent, OrderComponent, OrderConfirmComponent, LoginComponent, RegisterComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [
