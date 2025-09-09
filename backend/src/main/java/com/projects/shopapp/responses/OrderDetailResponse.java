@@ -1,9 +1,7 @@
 package com.projects.shopapp.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.projects.shopapp.models.Order;
 import com.projects.shopapp.models.OrderDetail;
-import com.projects.shopapp.models.Product;
 import lombok.*;
 
 @Data

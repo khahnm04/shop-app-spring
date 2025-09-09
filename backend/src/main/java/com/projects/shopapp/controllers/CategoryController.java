@@ -1,14 +1,20 @@
 package com.projects.shopapp.controllers;
 
+import com.projects.shopapp.components.LocalizationUtils;
 import com.projects.shopapp.dtos.CategoryDTO;
 import com.projects.shopapp.models.Category;
+import com.projects.shopapp.responses.UpdateCategoryResponse;
 import com.projects.shopapp.services.CategoryService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.LocaleResolver;
+
 import java.util.*;
 
 @RestController
@@ -17,6 +23,9 @@ import java.util.*;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final MessageSource messageSource;
+    private final LocaleResolver localeResolver;
+    private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
     public ResponseEntity<?> createCategory(
@@ -44,12 +53,18 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCategory(
+    public ResponseEntity<UpdateCategoryResponse> updateCategory(
         @PathVariable Long id,
-        @Valid @RequestBody CategoryDTO categoryDTO
+        @Valid @RequestBody CategoryDTO categoryDTO,
+        HttpServletRequest request
     ) {
         categoryService.updateCategory(id, categoryDTO);
-        return ResponseEntity.ok("Update category successfully!");
+        // Trả về token trong response
+        Locale locale = localeResolver.resolveLocale(request);
+        return ResponseEntity.ok(UpdateCategoryResponse.builder()
+                .message(messageSource.getMessage("category.update_category.update_successfully", null, locale))
+                .build()
+        );
     }
 
     @DeleteMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.projects.shopapp.controllers;
 
 import com.github.javafaker.Faker;
+import com.projects.shopapp.components.LocalizationUtils;
 import com.projects.shopapp.responses.ProductListResponse;
 import com.projects.shopapp.responses.ProductResponse;
 import com.projects.shopapp.services.IProductService;
@@ -27,6 +28,7 @@ import java.util.*;
 public class ProductController {
 
     private final IProductService productService;
+    private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
     public ResponseEntity<?> createProduct(

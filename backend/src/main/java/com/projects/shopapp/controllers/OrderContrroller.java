@@ -1,8 +1,10 @@
 package com.projects.shopapp.controllers;
 
+import com.projects.shopapp.components.LocalizationUtils;
 import com.projects.shopapp.dtos.*;
 import com.projects.shopapp.models.Order;
 import com.projects.shopapp.services.IOrderService;
+import com.projects.shopapp.utils.MessageKeys;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.*;
 public class OrderContrroller {
 
     private final IOrderService orderService;
+    private final LocalizationUtils localizationUtils;
 
     @PostMapping("")
     public ResponseEntity<?> createOrder(
@@ -81,7 +84,7 @@ public class OrderContrroller {
     ) {
         // soft delete => active = false
         orderService.deleteOrder(id);
-        return ResponseEntity.ok("Order deleted successfully");
+        return ResponseEntity.ok(localizationUtils.getLocalizedMesage(MessageKeys.DELETE_ORDER_SUCCESSFULLY));
     }
 
 }
