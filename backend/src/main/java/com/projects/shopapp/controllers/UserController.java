@@ -24,7 +24,7 @@ public class UserController {
     private final LocalizationUtils localizationUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> createUser(
+    public ResponseEntity<?> createUser(
         @Valid @RequestBody UserDTO userDTO,
         BindingResult bindingResult
     ) {
@@ -34,17 +34,22 @@ public class UserController {
                         .stream()
                         .map(FieldError::getDefaultMessage)
                         .toList();
-                return ResponseEntity.badRequest().body(RegisterResponse.builder()
-                                .message("")
-                        .build());
+                return ResponseEntity.badRequest().body(errorMessages);
             }
             if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
-                return ResponseEntity.badRequest().body(localizationUtils.getLocalizedMesage(MessageKeys.PASSWORD_NOT_MATCH));
+                return ResponseEntity.badRequest().body(RegisterResponse.builder()
+                                .message(localizationUtils.getLocalizedMesage(MessageKeys.PASSWORD_NOT_MATCH))
+                                .build());
             }
             User user = userService.createUser(userDTO);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.ok(RegisterResponse.builder()
+                            .message(localizationUtils.getLocalizedMesage(MessageKeys.REGISTER_SUCCESSFULLY))
+                            .user(user)
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(RegisterResponse.builder()
+                    .message(localizationUtils.getLocalizedMesage(MessageKeys.PASSWORD_NOT_MATCH))
+                    .build());
         }
     }
 
